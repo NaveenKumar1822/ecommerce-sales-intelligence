@@ -1,0 +1,292 @@
+// ============================================================
+// DAX MEASURES — E-commerce Sales Intelligence
+// Table: FactSales
+// Create these in the Modeling tab → New Measure
+// ============================================================
+
+// ─────────────────────────────────────────────────────────────
+// TABLE: _Measures (create an empty table called _Measures
+//         by entering: _Measures = {0} in New Table,
+//         then put all measures here to keep the model tidy)
+// ─────────────────────────────────────────────────────────────
+
+
+// ═══════════════════════════════════════════════════════════
+// 1. EXECUTIVE KPIs
+// ═══════════════════════════════════════════════════════════
+
+Total Revenue =
+    CALCULATE(
+        SUMX( FactSales, FactSales[NetRevenue] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Total Orders =
+    CALCULATE(
+        DISTINCTCOUNT( FactSales[OrderID] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Total Units Sold =
+    CALCULATE(
+        SUM( FactSales[Quantity] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Total Profit =
+    CALCULATE(
+        SUMX( FactSales, FactSales[Profit] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Profit Margin % =
+    DIVIDE(
+        [Total Profit],
+        [Total Revenue],
+        0
+    )
+
+Total Customers =
+    CALCULATE(
+        DISTINCTCOUNT( FactSales[CustomerID] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Average Order Value =
+    DIVIDE( [Total Revenue], [Total Orders], 0 )
+
+Total Shipping Revenue =
+    CALCULATE(
+        SUMX(
+            SUMMARIZE( FactSales, FactSales[OrderID], "sf", MAX( FactSales[ShippingFee] ) ),
+            [sf]
+        ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Total Discount Amount =
+    CALCULATE(
+        SUM( FactSales[DiscountAmount] ),
+        FactSales[IsCompleted] = TRUE()
+    )
+
+Return Rate % =
+    DIVIDE(
+        CALCULATE( DISTINCTCOUNT( FactSales[OrderID] ), FactSales[IsReturned] = TRUE() ),
+        CALCULATE( DISTINCTCOUNT( FactSales[OrderID] ) ),
+        0
+    )
+
+
+// ═══════════════════════════════════════════════════════════
+// 2. TIME-SERIES KPIs
+// ═══════════════════════════════════════════════════════════
+
+Monthly Revenue =
+    CALCULATE( [Total Revenue], ALLEXCEPT( DimDate, DimDate[YearMonth] ) )
+
+Previous Month Revenue =
+    CALCULATE(
+        [Total Revenue],
+        DATEADD( DimDate[Date], -1, MONTH )
+    )
+
+MoM Revenue Change =
+    [Total Revenue] - [Previous Month Revenue]
+
+MoM Revenue Growth % =
+    DIVIDE(
+        [MoM Revenue Change],
+        [Previous Month Revenue],
+        BLANK()
+    )
+
+YTD Revenue =
+    CALCULATE(
+        [Total Revenue],
+        DATESYTD( DimDate[Date] )
+    )
+
+Previous Year Revenue =
+    CALCULATE(
+        [Total Revenue],
+        DATEADD( DimDate[Date], -1, YEAR )
+    )
+
+YoY Revenue Growth % =
+    DIVIDE(
+        [Total Revenue] - [Previous Year Revenue],
+        [Previous Year Revenue],
+        BLANK()
+    )
+
+Cumulative Revenue =
+    CALCULATE(
+        [Total Revenue],
+        FILTER(
+            ALL( DimDate[Date] ),
+            DimDate[Date] <= MAX( DimDate[Date] )
+        )
+    )
+
+Monthly Profit =
+    CALCULATE( [Total Profit], ALLEXCEPT( DimDate, DimDate[YearMonth] ) )
+
+Previous Month Profit =
+    CALCULATE(
+        [Total Profit],
+        DATEADD( DimDate[Date], -1, MONTH )
+    )
+
+
+// ═══════════════════════════════════════════════════════════
+// 3. PRODUCT & CATEGORY KPIs
+// ═══════════════════════════════════════════════════════════
+
+Sales Contribution % =
+    DIVIDE(
+        [Total Revenue],
+        CALCULATE( [Total Revenue], ALL( DimProduct ) ),
+        0
+    )
+
+Profit Contribution % =
+    DIVIDE(
+        [Total Profit],
+        CALCULATE( [Total Profit], ALL( DimProduct ) ),
+        0
+    )
+
+// ─── Ranking Measures ───────────────────────────────────────
+
+Product Revenue Rank =
+    RANKX(
+        ALL( DimProduct[ProductName] ),
+        [Total Revenue],
+        ,
+        DESC,
+        Dense
+    )
+
+Category Revenue Rank =
+    RANKX(
+        ALL( FactSales[Category] ),
+        [Total Revenue],
+        ,
+        DESC,
+        Dense
+    )
+
+Top 5 Products Revenue =
+    CALCULATE(
+        [Total Revenue],
+        TOPN( 5, ALL( DimProduct[ProductName] ), [Total Revenue] )
+    )
+
+Bottom 5 Products Revenue =
+    CALCULATE(
+        [Total Revenue],
+        TOPN( 5, ALL( DimProduct[ProductName] ), [Total Revenue], ASC )
+    )
+
+
+// ═══════════════════════════════════════════════════════════
+// 4. CUSTOMER KPIs
+// ═══════════════════════════════════════════════════════════
+
+Revenue per Customer =
+    DIVIDE( [Total Revenue], [Total Customers], 0 )
+
+Repeat Customers =
+    COUNTROWS(
+        FILTER(
+            ADDCOLUMNS(
+                VALUES( FactSales[CustomerID] ),
+                "OrderCount",
+                CALCULATE(
+                    DISTINCTCOUNT( FactSales[OrderID] ),
+                    FactSales[IsCompleted] = TRUE()
+                )
+            ),
+            [OrderCount] > 1
+        )
+    )
+
+One-Time Customers =
+    COUNTROWS(
+        FILTER(
+            ADDCOLUMNS(
+                VALUES( FactSales[CustomerID] ),
+                "OrderCount",
+                CALCULATE(
+                    DISTINCTCOUNT( FactSales[OrderID] ),
+                    FactSales[IsCompleted] = TRUE()
+                )
+            ),
+            [OrderCount] = 1
+        )
+    )
+
+Repeat Customer Rate % =
+    DIVIDE( [Repeat Customers], [Total Customers], 0 )
+
+
+// ═══════════════════════════════════════════════════════════
+// 5. DISCOUNT KPIs
+// ═══════════════════════════════════════════════════════════
+
+Discounted Orders =
+    CALCULATE(
+        DISTINCTCOUNT( FactSales[OrderID] ),
+        FactSales[IsCompleted] = TRUE(),
+        FactSales[HasDiscount] = TRUE()
+    )
+
+Discount Rate % =
+    DIVIDE(
+        [Discounted Orders],
+        [Total Orders],
+        0
+    )
+
+Profit Margin on Discounted Orders % =
+    CALCULATE(
+        [Profit Margin %],
+        FactSales[HasDiscount] = TRUE()
+    )
+
+Profit Margin on Non-Discounted Orders % =
+    CALCULATE(
+        [Profit Margin %],
+        FactSales[HasDiscount] = FALSE()
+    )
+
+Discount Margin Gap =
+    [Profit Margin on Non-Discounted Orders %] - [Profit Margin on Discounted Orders %]
+
+
+// ═══════════════════════════════════════════════════════════
+// 6. ORDER STATUS KPIs
+// ═══════════════════════════════════════════════════════════
+
+Returned Orders =
+    CALCULATE(
+        DISTINCTCOUNT( FactSales[OrderID] ),
+        FactSales[IsReturned] = TRUE()
+    )
+
+Canceled Orders =
+    CALCULATE(
+        DISTINCTCOUNT( FactSales[OrderID] ),
+        FactSales[IsCanceled] = TRUE()
+    )
+
+Returned Revenue =
+    CALCULATE(
+        SUMX( FactSales, FactSales[NetRevenue] ),
+        FactSales[IsReturned] = TRUE()
+    )
+
+// ═══════════════════════════════════════════════════════════
+// END OF DAX MEASURES FILE
+// ═══════════════════════════════════════════════════════════

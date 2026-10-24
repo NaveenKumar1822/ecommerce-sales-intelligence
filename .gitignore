@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Data — never commit raw customer or transaction data
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Power BI
+*.pbix
+
+# IDE
+.vscode/
+.idea/

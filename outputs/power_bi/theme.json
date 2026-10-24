@@ -1,0 +1,80 @@
+{
+  "name": "Ecommerce Sales Intelligence",
+  "dataColors": [
+    "#2A9D8F",
+    "#E76F51",
+    "#E9C46A",
+    "#264653",
+    "#F4A261",
+    "#A8DADC",
+    "#457B9D",
+    "#1D3557"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#1E2D40",
+  "tableAccent": "#2A9D8F",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "fontFamily": [{ "value": "Segoe UI" }],
+        "fontSize": [{ "value": 11 }],
+        "color": [{ "solid": { "color": "#1E2D40" } }]
+      }
+    },
+    "card": {
+      "*": {
+        "calloutValue": [{
+          "fontSize": 32,
+          "fontBold": true,
+          "color": { "solid": { "color": "#1E2D40" } }
+        }],
+        "label": [{
+          "fontSize": 11,
+          "color": { "solid": { "color": "#6B7280" } }
+        }],
+        "background": [{
+          "color": { "solid": { "color": "#F9FAFB" } },
+          "transparency": 0
+        }],
+        "border": [{
+          "color": { "solid": { "color": "#E5E7EB" } },
+          "show": true
+        }]
+      }
+    },
+    "columnChart": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "gridlines": [{ "color": { "solid": { "color": "#E5E7EB" } } }]
+      }
+    },
+    "lineChart": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }],
+        "gridlines": [{ "color": { "solid": { "color": "#E5E7EB" } } }],
+        "markers": [{ "show": true, "size": 4 }]
+      }
+    },
+    "donutChart": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }]
+      }
+    },
+    "tableEx": {
+      "*": {
+        "header": [{
+          "fontBold": true,
+          "color": { "solid": { "color": "#1E2D40" } },
+          "background": { "solid": { "color": "#F3F4F6" } }
+        }],
+        "rows": [{ "fontColor": { "solid": { "color": "#374151" } } }]
+      }
+    },
+    "slicer": {
+      "*": {
+        "border": [{ "color": { "solid": { "color": "#D1D5DB" } }, "show": true }],
+        "background": [{ "color": { "solid": { "color": "#F9FAFB" } }, "transparency": 0 }]
+      }
+    }
+  }
+}

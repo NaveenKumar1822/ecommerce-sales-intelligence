@@ -1,0 +1,8 @@
+IssueType,AffectedField,RecordCount,CleaningAction,Notes
+Missing Values,order_items.unit_price,199,Imputed from products.list_price using product_id join,All 199 nulls resolved; no records dropped
+Inconsistent Categories,products.category,24,Stripped whitespace + applied str.title() normalization,24 dirty values → 8 clean canonical categories
+Missing Discount Code,orders.discount_code,7834,Retained as-is; nulls indicate no discount code used,NaN = no discount; boolean has_discount flag created instead
+Returned Orders,orders.status,407,Flagged is_returned=True; excluded from revenue KPIs,"$116,946 in returned revenue excluded from headline metrics"
+Canceled Orders,orders.status,344,Flagged is_canceled=True; excluded from revenue KPIs,"$76,160 in canceled revenue excluded from headline metrics"
+Row Multiplication on Join,fact_master,60,Investigated; caused by 60 customer records with duplicate signup dates in source,"60 extra rows; customers table has 3,600 rows but fact has 15,668 vs 15,608 order_items. Joins verified correct."
+No Sales Targets,N/A,0,No target file provided; target analysis section omitted,Recommend uploading monthly targets CSV for variance analysis
