@@ -31,11 +31,11 @@
 
 | Page | Screenshot |
 |------|-----------|
-| Executive Overview | ![Executive Overview](powerbi/screenshots/01-executive-overview.png) |
-| Sales & Product Performance | ![Sales & Product Performance](powerbi/screenshots/02-sales-product-performance.png) |
-| Customer Insights & RFM | ![Customer Insights](powerbi/screenshots/03-customer-rfm-segmentation.png) |
-| Geographic & Channel Performance | ![Geographic & Channel](powerbi/screenshots/04-geographic-channel-performance.png) |
-| Business Insights & Recommendations | ![Business Insights](powerbi/screenshots/05-business-insights-recommendations.png) |
+| Executive Overview | ![Executive Overview](outputs/power_bi/screenshots/executive_overview.png) |
+| Sales & Product Performance | ![Sales & Product Performance](outputs/power_bi/screenshots/sales_product_performance.png) |
+| Customer Insights & RFM | ![Customer Insights](outputs/power_bi/screenshots/customer_insights.png) |
+| Geographic & Channel Performance | ![Geographic & Channel](outputs/power_bi/screenshots/geographic_channel_performance.png) |
+| Business Insights & Recommendations | ![Business Insights](outputs/power_bi/screenshots/business_recommendations.png) |
 
 ---
 
@@ -185,13 +185,16 @@ ecommerce-sales-intelligence/
 │   └── project-report.pdf         ← Rendered PDF (generate from Markdown)
 │
 ├── powerbi/
-│   ├── Ecommerce_Sales_Intelligence.pbix
-│   └── screenshots/
-│       ├── 01-executive-overview.png
-│       ├── 02-sales-product-performance.png
-│       ├── 03-customer-rfm-segmentation.png
-│       ├── 04-geographic-channel-performance.png
-│       └── 05-business-insights-recommendations.png
+│   └── Ecommerce_Sales_Intelligence.pbix
+│
+├── outputs/
+│   └── power_bi/
+│       └── screenshots/
+│           ├── executive_overview.png
+│           ├── sales_product_performance.png
+│           ├── customer_insights.png
+│           ├── geographic_channel_performance.png
+│           └── business_recommendations.png
 │
 ├── data/
 │   ├── README.md                  ← Data dictionary and licensing
