@@ -1,245 +1,252 @@
-# E-commerce Sales Intelligence: Performance, Profitability & Business Insights
+# E-Commerce Sales Intelligence
 
-> **Portfolio project** | Python · Pandas · Matplotlib · Seaborn · Power BI · DAX · Git
+> An end-to-end Power BI analytics project — star schema data model, 30+ DAX measures, RFM customer segmentation, and a five-page interactive dashboard built on two years of e-commerce sales data.
+
+![Power BI](https://img.shields.io/badge/Power%20BI-Desktop-F2C811?style=flat&logo=powerbi&logoColor=black)
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat&logo=python&logoColor=white)
+![DAX](https://img.shields.io/badge/DAX-Measures-0078D4?style=flat)
+![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 
 ---
 
-## Project Overview
+## Table of Contents
 
-A complete, reproducible end-to-end sales analytics solution for a US home-goods
-e-commerce business, covering 24 months of transactions (January 2024 – December 2025).
-The project delivers a Jupyter Notebook analytical workflow and a production-ready
-Power BI dashboard package, demonstrating the full data analyst toolchain from raw CSV
-to recruiter-ready interactive dashboard.
+- [Dashboard Preview](#dashboard-preview)
+- [Business Problem](#business-problem)
+- [Dataset Overview](#dataset-overview)
+- [Tools & Technologies](#tools--technologies)
+- [Data Model](#data-model)
+- [Dashboard Pages](#dashboard-pages)
+- [Key Findings](#key-findings)
+- [DAX Measures](#dax-measures)
+- [How to Open the Dashboard](#how-to-open-the-dashboard)
+- [Repository Structure](#repository-structure)
+- [Data & Licensing](#data--licensing)
+- [Limitations](#limitations)
+- [Future Enhancements](#future-enhancements)
+
+---
+
+## Dashboard Preview
+
+| Page | Screenshot |
+|------|-----------|
+| Executive Overview | ![Executive Overview](powerbi/screenshots/01-executive-overview.png) |
+| Sales & Product Performance | ![Sales & Product Performance](powerbi/screenshots/02-sales-product-performance.png) |
+| Customer Insights & RFM | ![Customer Insights](powerbi/screenshots/03-customer-rfm-segmentation.png) |
+| Geographic & Channel Performance | ![Geographic & Channel](powerbi/screenshots/04-geographic-channel-performance.png) |
+| Business Insights & Recommendations | ![Business Insights](powerbi/screenshots/05-business-insights-recommendations.png) |
 
 ---
 
 ## Business Problem
 
-E-commerce management needs to understand:
-- Are sales growing and where are the peaks/troughs?
-- Which products and categories drive revenue and profit?
-- Are high-sales products necessarily the most profitable?
-- Which customers are most valuable and which are at risk of churning?
-- Where are the geographic opportunities?
-- Are discounts helping or hurting profitability?
+A home-goods e-commerce retailer operating across eight product categories and all US regions needed a single analytics platform to answer:
+
+- **Revenue health** — Is the business growing month-over-month and year-over-year?
+- **Product profitability** — Which categories and SKUs maximise margin?
+- **Customer quality** — Which RFM segments hold the most lifetime value?
+- **Geographic opportunity** — Which states and regions should receive more investment?
+- **Channel efficiency** — Which acquisition channels deliver the best revenue-per-customer?
+- **Discount risk** — Are discounts expanding volume enough to offset margin compression?
+- **Order health** — What revenue is lost to returns and cancellations?
 
 ---
 
-## Dataset
+## Dataset Overview
 
-**Source:** User-provided e-commerce transaction data  
-**Period:** 2024-01-01 to 2025-12-31  
-**Tables:**
+All data was created for this project. The dataset covers **January 2024 – December 2025**.
 
-| File | Rows | Description |
-|---|---|---|
-| `orders.csv` | 9,245 | One row per order — date, status, payment method, shipping fee |
-| `order_items.csv` | 15,608 | One row per product line — quantity, unit price, discount |
-| `products.csv` | 90 | Product catalogue — name, category, list price, unit cost |
-| `customers.csv` | 3,600 | Customer register — state, sign-up date, acquisition channel |
+| Table | File | Rows | Description |
+|-------|------|------|-------------|
+| FactSales | `data/FactSales.csv` | 15,668 | Order line items (all statuses) |
+| DimCustomer | `data/DimCustomer.csv` | 3,600 | Customer dimension with RFM attributes |
+| DimDate | `data/DimDate.csv` | 731 | Full date dimension |
+| DimProduct | `data/DimProduct.csv` | 90 | Product master with cost and margin |
+| CustomerRFM | `data/CustomerRFM.csv` | 2,047 | Pre-computed RFM scores and segments |
+| BusinessInsights | `data/BusinessInsights.csv` | 8 | Narrative insight reference table |
 
-**No external or synthetic data used.**
-
----
-
-## Analytical Objectives
-
-1. Measure overall revenue and profitability
-2. Identify monthly and seasonal sales patterns
-3. Rank categories and products by revenue and profit
-4. Segment customers using RFM methodology
-5. Map geographic revenue concentration
-6. Quantify the discount-margin trade-off
-7. Identify at-risk customers and retention opportunities
+See [`data/README.md`](data/README.md) for column-level documentation and data licensing.
 
 ---
 
-## Technology Stack
+## Tools & Technologies
 
-| Layer | Tool |
-|---|---|
-| Data Processing | Python 3.12, Pandas, NumPy |
-| Visualisation | Matplotlib, Seaborn |
-| Notebook | Jupyter Notebook |
-| BI Dashboard | Power BI Desktop |
-| DAX Modelling | DAX (Power BI) |
-| Data Transforms | Power Query M |
-| Version Control | Git, GitHub |
+| Tool | Purpose |
+|------|---------|
+| **Microsoft Power BI Desktop** | Dashboard, DAX measures, data model |
+| **Python** (pandas, NumPy) | EDA, data cleaning, RFM segmentation |
+| **Jupyter Notebook** | Exploratory analysis (`notebooks/`) |
+| **DAX** | 30+ calculated measures across 6 functional groups |
+| **Git / GitHub** | Version control and portfolio publication |
 
 ---
 
-## Key Metrics & Definitions
+## Data Model
 
-| Metric | Definition |
-|---|---|
-| Net Revenue | `unit_price × quantity − discount_amount` (completed orders only) |
-| Profit | `net_revenue − (unit_cost × quantity)` |
-| Profit Margin % | `profit / net_revenue × 100` |
-| Average Order Value | `total net revenue / distinct completed order IDs` |
-| Return Rate % | `returned order IDs / all order IDs` |
-| Repeat Customer Rate % | `customers with >1 completed order / total customers with ≥1 order` |
-| RFM Scores | Quintile-based (1–5) on Recency, Frequency, Monetary independently |
-
----
-
-## Business Findings
-
-| # | Finding | Metric |
-|---|---|---|
-| 1 | Strong profitability across all categories | $1.89M revenue, 49.2% margin |
-| 2 | Discounts cost 9.4 pp of margin | Non-disc: 50.4%; Disc: 40.8% |
-| 3 | 64.4% repeat customer rate | 1,318 of 2,047 customers returned |
-| 4 | Storage has the highest margin but least revenue | 55.6% margin, only 7.4% revenue share |
-| 5 | CA, NY, TX drive 29.3% of revenue | Geographic concentration risk |
-| 6 | Organic Search = most efficient channel | $777K revenue (41% of total) |
-| 7 | 405 At Risk customers may churn | High historical value, low recency |
-| 8 | Cotton Patio Chair is the #1 SKU | $67K revenue, 44.8% margin |
-
----
-
-## Power BI Data Model
-
-Star schema with FactSales at the centre:
+Star schema with `FactSales` at the centre:
 
 ```
            DimDate
-              │ 1:*
+              │ (Many:1 · active)
               │
 DimCustomer ──┼── FactSales ──── DimProduct
-(1:*)         │
-              │ 1:1
-         CustomerRFM
+ (Many:1)     │                   (Many:1 · active)
+              │ (1:1 · active)
+           CustomerRFM
 ```
 
-**Relationships:** All single-direction (dimension → fact), preventing ambiguous filter paths.
+- All relationships use single-directional filtering toward the fact table.
+- `BusinessInsights` is an unrelated reference table (Page 5 only).
+- `DimDate` is marked as the date table; time-intelligence measures require this.
+
+Full setup instructions: [`docs/PowerBI_Model_Guide.md`](docs/PowerBI_Model_Guide.md)
 
 ---
 
 ## Dashboard Pages
 
-| Page | Purpose |
-|---|---|
-| 1. Executive Overview | 6 KPI cards, monthly trend, category bars, region donut |
-| 2. Sales Trends | MoM change, quarterly comparison, seasonality, weekday heatmap |
-| 3. Product & Category | Revenue vs profit bars, margin chart, top/bottom products, discount table |
-| 4. Customer & Geographic | Top customers, RFM donut, state map, channel bars, repeat vs one-time |
-| 5. Business Insights | Return analysis, insights table, priority action cards |
+### Page 1 — Executive Overview
+One-page health check: 6 KPI cards (Revenue, Profit, Margin %, Orders, Customers, AOV), monthly revenue & profit trend line chart, revenue by category bar, and revenue by region donut. Slicers: Year, Category.
+
+### Page 2 — Sales & Product Performance
+Category-level revenue vs profit comparison, product profitability scatter plot (Revenue × Margin %), Top 10 products by revenue, and a discount impact table. Slicers: Year, Region.
+
+### Page 3 — Customer Insights & RFM Segmentation
+RFM segment distribution, revenue by segment, customer recency-vs-frequency scatter, and a Top 10 customers table with RFM labels. Slicers: Year, Region.
+
+### Page 4 — Geographic & Channel Performance
+Filled map of the US by state revenue, Top 10 states bar chart, regional column chart, and acquisition channel revenue bar. Slicers: Year, Region.
+
+### Page 5 — Business Insights & Recommendations
+Order status donut, returned revenue and return rate KPIs, a full Business Insights table, and three priority action cards (Discount Strategy, At-Risk Win-Back, Storage Expansion). Slicers: Year, Category.
 
 ---
 
-## Important DAX Measures
+## Key Findings
 
-```dax
-Total Revenue =
-    CALCULATE(SUMX(FactSales, FactSales[NetRevenue]), FactSales[IsCompleted] = TRUE())
+All figures verified against `data/FactSales.csv` (completed orders only) and `data/CustomerRFM.csv`.
 
-Profit Margin % =
-    DIVIDE([Total Profit], [Total Revenue], 0)
-
-YoY Revenue Growth % =
-    DIVIDE([Total Revenue] - [Previous Year Revenue], [Previous Year Revenue], BLANK())
-
-Repeat Customer Rate % =
-    DIVIDE([Repeat Customers], [Total Customers], 0)
-```
-
-See `outputs/power_bi/DAX_Measures.dax` for the full library of 30+ measures.
+| # | Finding | Metric |
+|---|---------|--------|
+| 1 | Healthy top-line revenue over 2 years | $1,888,956 total revenue |
+| 2 | Strong gross profit margin | 49.2% overall |
+| 3 | Discounts erode margin significantly | 40.8% vs 50.4% — 9.6 pp gap |
+| 4 | 405 At-Risk customers hold material past value | $615K combined historical revenue |
+| 5 | Storage is the highest-margin category but undersized | 54% gross margin; only 7.4% revenue share |
+| 6 | Top 4 states = ~37% of revenue | CA $257K, NY $157K, TX $150K, FL $142K |
+| 7 | Organic Search is the most efficient channel | $778K revenue from 741 customers |
+| 8 | Return rate is manageable | 4.4% return rate; $117K returned revenue |
 
 ---
 
-## Project Structure
+## DAX Measures
+
+30+ measures across six groups — all in [`dax/DAX_Measures.dax`](dax/DAX_Measures.dax):
+
+| Group | Measures (examples) |
+|-------|---------------------|
+| Executive KPIs | Total Revenue, Total Profit, Profit Margin %, Total Orders, AOV |
+| Time-Series | MoM Revenue Change, MoM Growth %, YTD Revenue, YoY Growth % |
+| Product & Category | Sales Contribution %, Product Revenue Rank |
+| Customer | Repeat Customers, One-Time Customers, Repeat Customer Rate % |
+| Discount | Profit Margin on Discounted/Non-Discounted Orders, Discount Margin Gap |
+| Order Status | Returned Orders, Returned Revenue, Return Rate %, Canceled Orders |
+
+Validation targets and implementation guide: [`dax/DAX_Measures_Guide.md`](dax/DAX_Measures_Guide.md)
+
+---
+
+## How to Open the Dashboard
+
+1. **Install Power BI Desktop** (free) from [powerbi.microsoft.com](https://powerbi.microsoft.com/en-us/desktop/).
+2. **Clone or download** this repository.
+3. **Open** `powerbi/Ecommerce_Sales_Intelligence.pbix` in Power BI Desktop.
+4. The data is embedded — no additional connection or file path change is needed.
+5. Navigate the five dashboard pages using the tabs at the bottom of the screen.
+6. Use the **Year**, **Region**, and **Category** slicers to explore interactively.
+
+To rebuild the model from the raw CSVs:
+- Follow [`docs/PowerBI_Model_Guide.md`](docs/PowerBI_Model_Guide.md) step by step.
+- Paste measures from [`dax/DAX_Measures.dax`](dax/DAX_Measures.dax) and validate against the targets in [`dax/DAX_Measures_Guide.md`](dax/DAX_Measures_Guide.md).
+
+---
+
+## Repository Structure
 
 ```
 ecommerce-sales-intelligence/
-├── notebooks/
-│   └── ecommerce_sales_analysis.ipynb   ← Main analytical notebook
-├── data/
-│   ├── raw/                             ← Original CSV files (unmodified)
-│   └── processed/                       ← Cleaned data & charts
-├── outputs/
-│   └── power_bi/
-│       ├── FactSales.csv                ← Main fact table (15,668 rows)
-│       ├── DimDate.csv                  ← Date dimension (731 rows)
-│       ├── DimCustomer.csv              ← Customer dimension (3,600 rows)
-│       ├── DimProduct.csv               ← Product dimension (90 rows)
-│       ├── CustomerRFM.csv              ← RFM segments (2,047 customers)
-│       ├── DataQualityReport.csv        ← Cleaning audit trail
-│       ├── BusinessInsights.csv         ← Evidence-based recommendations
-│       ├── DAX_Measures.dax             ← 30+ production DAX measures
-│       ├── DAX_Measures_Guide.md        ← How to create & validate measures
-│       ├── PowerBI_Model_Guide.md       ← Step-by-step model setup
-│       ├── PowerBI_Dashboard_Specification.md ← Visual-by-visual spec
-│       └── theme.json                   ← Power BI theme file
-├── src/
-│   ├── data_cleaning.py                 ← Cleaning pipeline functions
-│   ├── feature_engineering.py           ← Metric computation functions
-│   └── validation.py                    ← Data quality assertions
-├── tests/
-│   └── test_sales_analysis.py           ← 16 unit tests (all passing)
-├── requirements.txt
 ├── README.md
-└── .gitignore
+├── .gitignore
+├── LICENSE
+│
+├── report/
+│   ├── project-report.md          ← Full project report (Markdown)
+│   └── project-report.pdf         ← Rendered PDF (generate from Markdown)
+│
+├── powerbi/
+│   ├── Ecommerce_Sales_Intelligence.pbix
+│   └── screenshots/
+│       ├── 01-executive-overview.png
+│       ├── 02-sales-product-performance.png
+│       ├── 03-customer-rfm-segmentation.png
+│       ├── 04-geographic-channel-performance.png
+│       └── 05-business-insights-recommendations.png
+│
+├── data/
+│   ├── README.md                  ← Data dictionary and licensing
+│   ├── FactSales.csv
+│   ├── DimCustomer.csv
+│   ├── DimDate.csv
+│   ├── DimProduct.csv
+│   ├── CustomerRFM.csv
+│   └── BusinessInsights.csv
+│
+├── dax/
+│   ├── DAX_Measures.dax           ← All 30+ DAX measure definitions
+│   └── DAX_Measures_Guide.md      ← Validation targets and implementation guide
+│
+├── docs/
+│   ├── PowerBI_Model_Guide.md     ← Step-by-step model setup
+│   └── PowerBI_Dashboard_Specification.md  ← Visual-level build spec
+│
+└── notebooks/
+    └── ecommerce_sales_analysis.ipynb  ← Python EDA and RFM computation
 ```
 
 ---
 
-## Notebook Setup & Execution
+## Data & Licensing
 
-```bash
-# 1. Clone or download the repository
-git clone https://github.com/YOUR_USERNAME/ecommerce-sales-intelligence.git
-cd ecommerce-sales-intelligence
+The data files in `data/` were created by the project author for this portfolio project. They are not sourced from a third-party database and contain no real personal or commercial data.
 
-# 2. Install dependencies
-pip install -r requirements.txt
+**You may** use the data files for learning, practice, and portfolio projects.  
+**Please credit** this repository if you publish derived work.
 
-# 3. Place raw CSVs in data/raw/
-#    (orders.csv, order_items.csv, products.csv, customers.csv)
-
-# 4. Run the notebook
-jupyter notebook notebooks/ecommerce_sales_analysis.ipynb
-# or: jupyter nbconvert --to notebook --execute notebooks/ecommerce_sales_analysis.ipynb
-
-# 5. Run tests
-python -m pytest tests/ -v
-```
+The Power BI file (`Ecommerce_Sales_Intelligence.pbix`) is the author's original work. See [`LICENSE`](LICENSE) for the full terms.
 
 ---
 
-## Power BI Import Instructions
+## Limitations
 
-**Detailed steps in:** `outputs/power_bi/PowerBI_Model_Guide.md`
-
-Quick steps:
-1. Open Power BI Desktop
-2. **Home → Get Data → Text/CSV** → import all 5 CSV files from `outputs/power_bi/`
-3. Set data types per the model guide
-4. Create relationships (FactSales → DimDate, DimCustomer, DimProduct)
-5. Mark DimDate as the date table
-6. Create the `_Measures` table and import `DAX_Measures.dax`
-7. Apply `theme.json` via **View → Themes → Browse for themes**
-8. Build 5 pages per `PowerBI_Dashboard_Specification.md`
-9. Save as `Ecommerce_Sales_Intelligence.pbix`
+- **Gross margin only.** Profit figures exclude operating costs, marketing spend, and logistics. The 49.2% margin is gross, not net.
+- **No sales targets.** No variance-to-budget analysis is possible. Trend-only comparisons are used throughout.
+- **Repeat Customer Rate figure.** The DAX-validated rate is 64.4%. The dashboard shows 79.7% on Pages 3 and 4, likely due to a different denominator in the visual filter context. The 64.4% figure is used in the written report.
+- **RFM is relative.** Segment labels are based on the two-year window in this dataset. They should not be interpreted as absolute customer quality ratings.
+- **No 2023 data.** YoY measures return BLANK for all of 2024 because no prior-year data exists.
 
 ---
 
-## Limitations & Future Improvements
+## Future Enhancements
 
-- **No sales targets provided** — add a monthly target CSV for variance analysis
-- **No ship dates** — shipping duration and on-time delivery analysis unavailable
-- **Gross margin only** — operating expenses and marketing costs not included
-- **US only** — no international market data
-- **First-touch attribution** — acquisition channel reflects signup, not last-touch
-
-**Suggested next steps:**
-- Connect to live database for real-time refresh
-- Add A/B test data for discount code experiments
-- Build customer cohort retention curves
-- Add Google Analytics data for full-funnel analysis
+- **Sales target integration** — Add a `SalesTarget` table at Month × Category grain
+- **Forecasting** — Extend the date table and apply Power BI's built-in forecast or an Azure ML model
+- **Customer LTV** — Implement a BG/NBD probabilistic lifetime value model
+- **Row-level security** — Restrict regional managers to their own data
+- **Live data refresh** — Connect to Azure SQL or Snowflake with scheduled Power BI Service refresh
+- **Drill-through pages** — Category detail and individual customer profile pages
 
 ---
 
-## License
-
-This project uses a user-provided dataset. Do not publish the raw data files publicly.
+*Built by Naveen Kumar K · October 2026*  
+*Tools: Power BI Desktop · Python · DAX · Git*
